@@ -27,7 +27,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.net.ConnectivityManager;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -88,22 +88,30 @@ public class ProductListFragment extends Fragment implements  AdapterView.OnItem
             progressBar.setCancelable(true);//you can cancel it by pressing back button
             progressBar.setMessage("Downloading ...");
             progressBar.show();
-            apiRequest.getProduct().enqueue(new Callback<Product>() {
-                @Override
-                public void onResponse(Call<Product> call, Response<Product> response) {
-                    editor.putString("product", "" + response.body().toString());
-                    product = response.body();
-                    productDashRecyclerAdapter= new ProductDashRecyclerAdapter(product,context);
-                    recyclerview.setAdapter(productDashRecyclerAdapter);
-                   inflateSpinnerData();
-                    progressBar.cancel();
-                }
-                @Override
-                public void onFailure(Call<Product> call, Throwable t) {
-                    progressBar.cancel();
-                    Toast.makeText(context, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if(isNetworkConnected()) {
+                apiRequest.getProduct().enqueue(new Callback<Product>() {
+                    @Override
+                    public void onResponse(Call<Product> call, Response<Product> response) {
+                        editor.putString("product", "" + response.body().toString());
+                        product = response.body();
+                        productDashRecyclerAdapter = new ProductDashRecyclerAdapter(product, context);
+                        recyclerview.setAdapter(productDashRecyclerAdapter);
+                        inflateSpinnerData();
+                        progressBar.cancel();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Product> call, Throwable t) {
+                        progressBar.cancel();
+                        Toast.makeText(context, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+                    }
+
+                });
+            }else{
+                progressBar.cancel();
+                Toast.makeText(context, "Internet connection not available", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
     }
@@ -141,8 +149,11 @@ public class ProductListFragment extends Fragment implements  AdapterView.OnItem
     }
 
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position!=0) {
