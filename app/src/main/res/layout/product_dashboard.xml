@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:background="@color/white">
+
+    <Spinner
+        android:id="@+id/spinner_filter"
+        android:layout_width="match_parent"
+        android:padding="@dimen/fab_margin"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_height="wrap_content"></Spinner>
+
+  <!--  <GridView
+        android:layout_below="@+id/spinner_filter"
+        android:id="@+id/grid_product"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="90dp"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:numColumns="2">
+    </GridView>-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@+id/spinner_filter"
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:scrollbars="vertical" />
+</RelativeLayout>
